@@ -1,8 +1,23 @@
 # 🛡️ DevSecOps Home Lab
 
-![Platform](https://img.shields.io/badge/Platform-Proxmox_VE-orange?style=flat-square)
-![Security](https://img.shields.io/badge/Security-pfSense_Hardened-blue?style=flat-square)
-![License](https://img.shields.io/badge/License-MIT-grey?style=flat-square)
+![Status](https://img.shields.io/badge/Status-Em_Andamento-yellow?style=for-the-badge)
+![License](https://img.shields.io/badge/License-MIT-grey?style=for-the-badge)
+
+![Proxmox](https://img.shields.io/badge/Proxmox-E57000?style=for-the-badge&logo=proxmox&logoColor=white)
+![Debian](https://img.shields.io/badge/Debian-A81D33?style=for-the-badge&logo=debian&logoColor=white)
+![Linux](https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black)
+
+![pfSense](https://img.shields.io/badge/pfSense-2C3E50?style=for-the-badge&logo=pfsense&logoColor=white)
+![Cloudflare](https://img.shields.io/badge/Cloudflare-F38020?style=for-the-badge&logo=cloudflare&logoColor=white)
+
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![Vaultwarden](https://img.shields.io/badge/Vaultwarden-175DDC?style=for-the-badge&logo=bitwarden&logoColor=white)
+![Nextcloud](https://img.shields.io/badge/Nextcloud-0082C9?style=for-the-badge&logo=nextcloud&logoColor=white)
+
+![Bash](https://img.shields.io/badge/Bash-4EAA25?style=for-the-badge&logo=gnu-bash&logoColor=white)
+![Git](https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=git&logoColor=white)
+![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)
+
 
 ## 📖 Sobre o Projeto
 
@@ -11,6 +26,12 @@ Este repositório documenta a construção e gestão da minha infraestrutura de 
 O objetivo principal é simular um ambiente empresarial real (**Enterprise-Grade**), saindo da configuração doméstica padrão para uma arquitetura baseada em **Segurança Ofensiva/Defensiva**, **Segmentação de Rede** e **Automação**.
 
 Aqui centralizo toda a documentação desde instalações, configurações de rede, scripts de manutenção e código de infraestrutura (IaC).
+
+## 🗺️ Arquitetura de Rede
+
+Abaixo encontra-se o diagrama da topologia física e lógica implementada, destacando a separação entre o Hardware, a Camada de Virtualização e a Segmentação via VLANs.
+
+![Topologia de Rede](images/network-topology.png)
 
 ---
 
