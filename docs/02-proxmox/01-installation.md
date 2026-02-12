@@ -1,6 +1,7 @@
 # Instalação do Proxmox VE (Bare Metal)
 
-> [!NOTE] Ficha Técnica
+> [!NOTE]
+> **Ficha Técnica**
 > * **Versão:** Proxmox VE 9.1
 > * **Hardware Alvo:** Mini PC Ryzen 4500U
 > * **Tipo:** Bare Metal Hypervisor
@@ -58,7 +59,8 @@ Arrancar pela Pen USB e selecionar **"Install Proxmox VE (Graphical)"**.
 2.  **Target Harddisk (Disco de Destino)**
     * Selecionar o disco NVMe/SSD na lista.
 
-> [!WARNING] Atenção Crítica
+> [!WARNING]
+> **Atenção Crítica**
 > Confirmar que é o disco correto. Todos os dados serão apagados irreversivelmente ao prosseguir.
 
 3.  **Location and Time Zone**
@@ -83,7 +85,7 @@ Arrancar pela Pen USB e selecionar **"Install Proxmox VE (Graphical)"**.
 
 Após a instalação, o sistema irá reiniciar. Acede à interface web noutro computador.
 
-> [!SUCCESS] URL de Acesso
-> ```
-> https://192.168.1.200:8006
-> ```
+> [!TIP]
+> **URL de Acesso**
+>
+> `https://192.168.1.200:8006`

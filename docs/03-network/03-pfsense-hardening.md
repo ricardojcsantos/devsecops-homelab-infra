@@ -1,6 +1,8 @@
 # PfSense: Hardening, VLANs e Otimização
 
-> [!ABSTRACT] Resumo
+> [!NOTE]
+> **Resumo**
+> 
 > * **Segurança:** Implementação de "Zero Trust" com bloqueios explícitos entre VLANs.
 > * **Infraestrutura:** Segmentação lógica via VLANs e Switch Gerível (TP-Link TL-SG108E).
 > * **Performance:** Otimização do Switch (QoS) e Segurança DNS.
@@ -56,13 +58,16 @@
 2. Verificar se a lista é preenchida com as alterações recentes.
 3. **Para restaurar:** Clicar no ícone de "Revisão" ao lado da data desejada.
 
-> [!TIP] Em caso de Desastre (Nova Instalação)
+> [!TIP]
+> **Em caso de Desastre (Nova Instalação)**
+> 
 > Se tiveres de reinstalar o pfSense do zero (ex: falha de disco ou corrupção):
 > 1. Instalar o novo pfSense.
 > 2. Ir a **Services > Auto Config Backup**.
 > 3. Substituir a nova **Device Key** pela **Antiga** (que guardaste no cofre).
 > 4. Inserir a **Encryption Password**.
 > 5. Clicar em **Save** e ir à aba **Restore**. Os teus backups antigos estarão disponíveis para download/restore.
+
 
 ---
 
@@ -129,7 +134,9 @@
 
 **Objetivo:** Bloquear tudo por defeito, permitir apenas o necessário.
 
-> [!DANGER] Regra de Ouro (DNS)
+> [!WARNING]
+> **Regra de Ouro (DNS)**
+> 
 > Em VLANs bloqueadas de aceder à Firewall (IoT, Server, Lab), a **Regra nº 1** tem de ser **Permitir DNS (Porta 53)** para o destino "This Firewall". Sem isto, não há navegação.
 
 ### 6.1 TRUSTED (VLAN 20)
@@ -177,11 +184,13 @@
 
 **Objetivo:** Fixar IP de gestão, isolar as redes e distribuir VLANs para as portas físicas.
 
-> [!NOTE] Topologia Física (Atualizada)
+> [!NOTE]
+> **Topologia Física (Atualizada)**
+> 
 > * **Porta 1:** Uplink (Liga ao Proxmox/pfSense). Híbrida (Gestão + VLANs).
 > * **Portas 2-5:** PCs e Portáteis (VLAN 20).
-> * **Portas 6-7:** TV Box, Smart Home(VLAN 30).
-> * **Porta 8:** **Gestão Dedicada/Emergência** (Rede 10.10.1.x).
+> * **Portas 6-7:** TV Box, Smart Home (VLAN 30).
+> * **Porta 8:** Gestão Dedicada/Emergência (Rede 10.10.1.x).
 
 ### 7.1 Definir IP Estático (Gestão)
 1. Aceder à WebGUI do Switch (IP obtido via DHCP).
@@ -256,7 +265,8 @@
 5. **Enable DNSSEC:** `Checked` (Valida autenticidade das respostas DNS).
 6. **Save**.
 
-> [!SUCCESS] Estado Final
+> [!TIP]
+> **Estado Final**
 > 
 > * **Segurança:** Acessos administrativos bloqueados e contas de serviço criadas.
 > * **Infraestrutura:** VLANs configuradas e distribuídas pelo switch físico.

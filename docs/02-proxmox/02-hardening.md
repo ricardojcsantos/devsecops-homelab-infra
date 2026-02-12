@@ -1,6 +1,7 @@
 # Proxmox VE: Hardening & Post-Install
 
-> [!NOTE] Ficha Técnica
+> [!NOTE]
+> **Ficha Técnica**
 > * **Objetivo:** Preparar o SO (Debian Trixie) para produção.
 > * **Segurança:** Repositórios "No-Subscription", Microcode, SSH Key-Only e Fail2Ban.
 > * **Método:** Híbrido (Script de Bootstrap + Hardening Manual).
@@ -11,7 +12,9 @@
 
 Este script segue uma abordagem de **"Least Intrusion"**. Valida a versão do SO, faz backups e apenas altera o estritamente necessário (Repositórios e Microcode).
 
-> [!IMPORTANT] Execução via SSH Obrigatória
+> [!IMPORTANT]
+> **Execução via SSH Obrigatória**
+> 
 > O comando reinicia o serviço `pveproxy` (Interface Web). Se for executado pela consola web, a ligação cai a meio. Usa um terminal (Putty/Terminal).
 
 ### Opção A: Execução Direta (Recomendado)
@@ -88,13 +91,15 @@ echo "    Por favor reiniciar o servidor com o comando: reboot   "
 echo "----------------------------------------------------------"
 ```
 
+
 ---
 
 ## 2. Gestão de Identidade e Acesso (IAM)
 
-> [!WARNING] Regra de Ouro
-> **Objetivo:** Eliminar o uso do utilizador `root` para operações diárias.
-> Deve-se criar um utilizador nominal para garantir rastreabilidade (*Audit Trail*).
+> [!WARNING]
+> **Regra de Ouro**
+> 
+> **Objetivo:** Eliminar o uso do utilizador `root` para operações diárias. Deve-se criar um utilizador nominal para garantir rastreabilidade (*Audit Trail*).
 
 ### 2.1. Criar Utilizador Admin (RBAC)
 
@@ -143,9 +148,10 @@ Fazer via GUI (*Datacenter View*).
 
 ## 3. Autenticação Multifator (MFA/2FA)
 
-> [!IMPORTANT] Requisito de Segurança
+> [!IMPORTANT]
+> **Requisito de Segurança**
+> 
 > Em ambientes profissionais, **nenhuma** conta administrativa deve estar exposta sem MFA.
->
 > * **Método:** Exclusivo via Interface Web (o QR Code precisa de ser gerado visualmente).
 
 ### Passos de Configuração
@@ -169,7 +175,9 @@ Fazer via GUI (*Datacenter View*).
     * Usar a App (Google Auth, Authy, Microsoft Auth) para ler o **QR Code** no ecrã.
     * Inserir o código de 6 dígitos no campo "Verify Code" e clicar em **Add**.
 
-> [!TIP] Validação
+> [!TIP]
+> **Validação**
+> 
 > Faz **Logout** e volta a tentar entrar. O sistema deve agora pedir o token de 6 dígitos após a password.
 
 
@@ -177,9 +185,10 @@ Fazer via GUI (*Datacenter View*).
 
 ## 4. SSH Hardening (Chaves e Bloqueio)
 
-> [!CRITICAL] Segurança Crítica
-> O objetivo é substituir a autenticação por password por **Chaves Criptográficas (SSH Keys)**.
-> Isto anula completamente ataques de *Brute-Force* baseados em dicionário.
+> [!CAUTION]
+> **Segurança Crítica**
+> 
+> O objetivo é substituir a autenticação por password por **Chaves Criptográficas (SSH Keys)**. Isto anula completamente ataques de *Brute-Force* baseados em dicionário.
 
 ### 4.1. Configurar Chaves (No teu PC)
 
@@ -203,7 +212,9 @@ type $env:USERPROFILE\.ssh\id_ed25519.pub | ssh ricardo@192.168.1.200 "mkdir -p 
 
 Agora vamos configurar o servidor para recusar qualquer login que não use chaves. Isto elimina a possibilidade de ataques de força bruta.
 
-> [!DANGER] Perigo de Lockout
+> [!CAUTION]
+> **Perigo de Lockout**
+> 
 > 1. Testa o acesso SSH com a chave numa **nova janela** antes de fazeres isto.
 > 2. Se não conseguires entrar, **não feches** a janela atual onde estás logado!
 
@@ -249,9 +260,10 @@ systemctl restart sshd
 
 ## 5. Proteção Ativa e Rede (Fail2Ban & Kernel)
 
-> [!NOTE] Objetivo Técnico
+> [!NOTE]
+> **Objetivo Técnico**
+> 
 > Banir IPs atacantes automaticamente (IPS) e blindar o Kernel contra ataques de rede comuns (*Spoofing*, *Flooding* e *Man-in-the-Middle*).
->
 > * **Método:** Exclusivo via Terminal (estas configurações de baixo nível não existem na GUI).
 
 ### 5.1. Instalar Fail2Ban (Intrusion Prevention)
@@ -302,7 +314,7 @@ nano /etc/sysctl.d/99-pve-security.conf
 ```
 
 **Passo 2: Colar as regras de blindagem**
-Copia o bloco abaixo e cola dentro do editor:
+Copia o bloco anano /etc/sysctl.d/99-pve-security.confbaixo e cola dentro do editor:
 
 ```ini
 # --- Proteção de Rede (Network Hardening) ---

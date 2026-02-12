@@ -1,6 +1,8 @@
 # Instalação e Configuração do pfSense
 
-> [!ABSTRACT] Objetivo
+> [!NOTE]
+> **Objetivo**
+> 
 > Instalar o Sistema Operativo, definir os IPs das interfaces, executar o "Switchover" físico e realizar a configuração inicial via Web.
 
 ## 1. Instalação do OS (Console)
@@ -49,7 +51,9 @@ No menu de texto (*Opção 2 - Set interface(s) IP address*):
 
 ## 4. O Switchover (Troca de Cabos)
 
-> [!DANGER] Atenção
+> [!CAUTION]
+> **Atenção**
+> 
 > Este passo altera a topologia física da rede.
 
 1.  Manter o cabo da **WAN (`nic0`)** ligado ao Router da Operadora.
@@ -84,14 +88,19 @@ Executar o *Setup Wizard* com os seguintes parâmetros:
 | **7. Reload** | Reload | - | Aplica as configurações. |
 | **8. Finish** | Finish | - | Redireciona para o Dashboard. |
 
-> [!TIP] Pós-Instalação
+
+> [!TIP]
+> **Pós-Instalação**
+> 
 > Após o *Finish*, aceitar o "Copyright Notice". O sistema está operacional.
 
 ---
 
 ## 6. Correção de Performance (VirtIO Offloading)
 
-> [!CRITICAL] Passo Obrigatório para VirtIO
+> [!CAUTION]
+> **Passo Obrigatório para VirtIO**
+> 
 > Como estamos a usar placas de rede virtuais (`vtnet`), o "Hardware Checksum Offloading" causa corrupção de pacotes e lentidão extrema. Tem de ser desativado para o CPU processar os pacotes.
 
 1.  No pfSense, navegar para: **System** > **Advanced** > **Networking**.
@@ -121,7 +130,9 @@ Remover o acesso antigo da WAN e definir o pfSense como o Gateway oficial do Pro
     * Clicar em **OK**.
 5.  Clicar em **Apply Configuration** (No topo da janela).
 
-> [!SUCCESS] Estado Final da Infraestrutura
-> * **`vmbr0` (WAN):** Passagem direta para o pfSense (Sem IP no Host).
-> * **`vmbr1` (LAN):** Rede de Gestão com Internet (`10.10.1.254` -> GW `10.10.1.1`).
+> [!TIP]
+> **Estado Final da Infraestrutura**
+> 
+> * `vmbr0` (WAN): Passagem direta para o pfSense (Sem IP no Host).
+> * `vmbr1` (LAN): Rede de Gestão com Internet (`10.10.1.254` -> GW `10.10.1.1`).
 > * **pfSense:** Router e Gateway central (`10.10.1.1`).

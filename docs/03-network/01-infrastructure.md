@@ -1,8 +1,10 @@
 # Infraestrutura de Rede & VM pfSense
 
-> [!ABSTRACT] Objetivo
-> Preparar o Proxmox (Host Networking), criar a VM para o pfSense e configurar o Router da Operadora (DMZ + DHCP Estático).
-> **Estratégia:** Preparar toda a parte física e virtual antes de instalar o software.
+> [!NOTE]
+> **Objetivo**
+> 
+> Preparar o Proxmox (Host Networking), criar a VM para o pfSense e configurar o Router da Operadora (DMZ + DHCP Estático). 
+> * **Estratégia:** Preparar toda a parte física e virtual antes de instalar o software.
 
 ## 1. Configuração de Rede (Host)
 
@@ -185,7 +187,9 @@ Switch -- "Tagged (Virtual)" --> VLAN50
     * *Motivo:* Cria a nova "porta de entrada" segura para o Proxmox.
     * **Aplicar:** Clicar em **Apply Configuration**.
 
-> [!TIP] Teste de Segurança
+> [!TIP]
+> **Teste de Segurança**
+> 
 > Antes de avançar, ligar um cabo da `nic1` ao PC (configurar o PC com IP manual `10.10.1.50`) e tentar aceder a `https://10.10.1.254:8006`. Se funcionar, a porta de emergência está pronta.
 
 ---
@@ -258,7 +262,9 @@ A VM é criada apenas com uma placa. Adicionar a segunda placa (LAN) antes de in
 2.  Procurar a secção **DHCP estático - rede local**.
 3.  Adicionar novo IP:
 
-> [!TIP] Dados da Reserva
+> [!TIP]
+> **Dados da Reserva**
+> 
 > * **Endereço MAC:** (Colar o MAC da Interface WAN `net0` obtido no passo 3.1)
 > * **Endereço IP:** `192.168.1.253`
 
@@ -266,11 +272,15 @@ A VM é criada apenas com uma placa. Adicionar a segunda placa (LAN) antes de in
 1.  Procurar a secção **Internet**.
 2.  Entrar na opção **DMZ**.
 
-> [!TIP] Configuração
-> * **Função DMZ:** `Ativado / On`
+> [!TIP]
+> **Configuração**
+> 
+> * **Função DMZ:** `Ativado` / `On`
 > * **Endereço IP local (Target):** `192.168.1.253`
 
 * **Confirmar alterações.**
 
-> [!WARNING] Nota Crítica
+> [!WARNING]
+> **Nota Crítica**
+> 
 > Não atribuir este IP (`192.168.1.253`) a nenhum outro dispositivo manualmente. Ele pertence exclusivamente à WAN do pfSense.
