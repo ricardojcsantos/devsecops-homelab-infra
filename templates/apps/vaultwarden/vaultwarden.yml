@@ -1,0 +1,18 @@
+services:
+  vaultwarden:
+    container_name: vaultwarden
+    image: vaultwarden/server:1.33.2                 # Imutabilidade: Nunca usar 'latest'. Versão fixada para não partir o cofre com updates automáticos.
+    restart: unless-stopped                          # Resiliência: O cofre arranca sozinho se o servidor for reiniciado.
+    environment:
+      - TZ=Europe/Lisbon                             # Sincroniza a hora (Absolutamente crítico para os teus códigos de autenticação 2FA/TOTP funcionarem).
+      - SIGNUPS_ALLOWED=true                         # HARDENING (Ação Manual): Mudar para 'false' após criares a tua conta, para bloquear registos de estranhos.
+    # ports:
+    #   - '8080:80'                                  # HARDENING: Desativado. O Nginx Proxy Manager encaminha o tráfego internamente sem expor a porta à rede local.
+    volumes:
+      - /data/vaultwarden/data:/data                 # Persistência: Guarda a tua base de dados encriptada fisicamente no disco do Proxmox.
+    networks:
+      - proxy-network                                # Liga o cofre à rede isolada do Proxy.
+
+networks:
+  proxy-network:
+    external: true                                   # Roteamento: Obriga a usar a rede segura que já foi criada pelo NPM.

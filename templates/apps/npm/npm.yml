@@ -1,0 +1,24 @@
+services:
+  nginx-proxy-manager:
+    container_name: nginx-proxy-manager
+    image: jc21/nginx-proxy-manager:2.12.1         # Imutabilidade: Versão fixada. Nunca usar 'latest' no componente principal de rede.
+    restart: unless-stopped                        # Resiliência: O Proxy arranca automaticamente com o servidor.
+    environment:
+      - TZ=Europe/Lisbon                           # CRÍTICO: Sem a hora exata, a renovação automática dos certificados SSL (Let's Encrypt) vai falhar.
+    ports:
+      - '80:80'                                    # Porta HTTP (Usada para validar certificados e forçar o reencaminhamento para HTTPS).
+      - '81:81'                                    # Porta de Administração (Painel Web). Aceder via http://IP_DA_VM:81.
+      - '443:443'                                  # Porta HTTPS (Tráfego seguro encriptado).
+    volumes:
+      - /data/npm/data:/data                       # Persistência: Guarda as tuas rotas e configurações fisicamente no disco.
+      - /data/npm/letsencrypt:/etc/letsencrypt     # Persistência: Guarda os certificados SSL para não os perderes num reinício.
+    networks:
+      - proxy-network                              # Liga o Proxy à rede virtual.
+
+# ==============================================================================
+# DEFINIÇÃO DA REDE CORE (VLAN DOCKER)
+# ==============================================================================
+networks:
+  proxy-network:
+    name: proxy-network                            # Como o NPM é o "Porteiro", é ele que CRIA a rede. As outras apps apenas se ligam a ela.
+    driver: bridge                                 # Cria uma ponte isolada estritamente dentro do ambiente Docker.

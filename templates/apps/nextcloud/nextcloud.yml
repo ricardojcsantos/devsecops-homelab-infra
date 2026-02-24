@@ -1,0 +1,37 @@
+services:
+  db:
+    image: mariadb:10.11                          # Imutabilidade: Versão fixada para garantir estabilidade e prevenir quebras na base de dados.
+    container_name: nextcloud-db
+    restart: unless-stopped
+    command: --transaction-isolation=READ-COMMITTED --log-bin=binlog --binlog-format=ROW
+    volumes:
+      - /data/nextcloud/db:/var/lib/mysql         # Persistência: Guarda os ficheiros físicos da base de dados no disco da VM.
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASS}       # Credencial de Administração injetada pelo GitHub Actions.
+      - MYSQL_PASSWORD=${DB_PASS}                 # Credencial da Aplicação injetada pelo GitHub Actions.
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=nextcloud
+    networks:
+      - proxy-network                             # Liga o contentor à rede segura do Proxy.
+
+  nextcloud:
+    image: nextcloud:30.0.0-apache                # HARDENING: Nunca usar a tag 'latest' em produção. Fixamos a versão para controlo absoluto.
+    container_name: nextcloud-app
+    restart: unless-stopped                       # Resiliência: O serviço arranca automaticamente com o servidor.
+    # ports:
+    #   - 8081:80                                 # HARDENING: Desativado. O NPM encaminha o tráfego internamente. Fecha a porta à LAN.
+    depends_on:
+      - db                                        # Ordem de arranque: Garante que a MariaDB está ativa antes da Nuvem iniciar.
+    volumes:
+      - /data/nextcloud/app:/var/www/html         # Persistência: Guarda os teus ficheiros de utilizador fisicamente no Proxmox.
+    environment:
+      - MYSQL_PASSWORD=${DB_PASS}                 # Sincroniza a password com a base de dados.
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=nextcloud
+      - MYSQL_HOST=nextcloud-db                   # Comunicação interna usando o nome do contentor (DNS interno do Docker).
+    networks:
+      - proxy-network                             # Anexa a aplicação à rede do Reverse Proxy.
+
+networks:
+  proxy-network:
+    external: true                                # Roteamento: Obriga o uso da rede virtual criada pelo Nginx Proxy Manager.

@@ -1,0 +1,61 @@
+name: Homelab DevSecOps Pipeline
+
+# ==============================================================================
+# 1. POLÍTICA DE GATILHOS (TRIGGERS)
+# ==============================================================================
+on:
+  push:
+    branches:
+      - main          # Restrição IAM: Execução exclusiva via alterações na branch principal.
+    paths:
+      - 'apps/**'     # Otimização CI/CD: Evita execuções vazias. O pipeline só arranca se houver mutação nos manifestos Docker.
+
+# ==============================================================================
+# 2. DEFINIÇÃO DA MÁQUINA DE EXECUÇÃO (RUNNER)
+# ==============================================================================
+jobs:
+  deploy-infra:
+    name: Aprovisionamento de Contentores
+    runs-on: self-hosted # Hardening: Proíbe execução em instâncias públicas. Força o roteamento estrito para a VM local (Proxmox).
+
+    # ==============================================================================
+    # 3. SEQUÊNCIA DE OPERAÇÕES (STEPS)
+    # ==============================================================================
+    steps:
+      - name: 📥 Sincronização de Estado (Checkout)
+        uses: actions/checkout@v4 # Puxa o código imutável do GitHub para o diretório na VM local.
+
+      - name: 🚀 Aprovisionamento NPM
+        run: docker compose -f apps/npm/npm.yml up -d --remove-orphans
+
+      - name: 🔐 Aprovisionamento Vaultwarden
+        run: docker compose -f apps/vaultwarden/vaultwarden.yml up -d --remove-orphans
+
+      - name: ☁️ Aprovisionamento Immich (v2.5.6 Core)
+        env:
+          DB_PASS: ${{ secrets.IMMICH_DB_PASS }} # Extração segura do cofre do GitHub
+        run: |
+          # Construção dinâmica (em RAM/Disco Local) das credenciais para evitar Hardcoding no YAML
+          echo "DB_PASSWORD=$DB_PASS" > apps/immich/.env
+          echo "DB_USERNAME=postgres" >> apps/immich/.env
+          echo "DB_DATABASE_NAME=immich" >> apps/immich/.env
+          echo "IMMICH_MACHINE_LEARNING_ENABLED=false" >> apps/immich/.env 
+          
+          # Injeção forçada do ficheiro de ambiente (--env-file) e rotina de purga
+          docker compose --env-file apps/immich/.env -f apps/immich/immich.yml up -d --remove-orphans
+
+      - name: ☁️ Aprovisionamento Nextcloud
+        env: 
+          ROOT_PASS: ${{ secrets.DB_ROOT_PASS }}   # Password de Administração (Root) da Base de Dados
+          APP_PASS: ${{ secrets.DB_PASS }}         # Password de Aplicação (Nextcloud User)
+        run: | 
+          # O operador '>' cria/sobrescreve o ficheiro para garantir que não há resíduos de execuções anteriores
+          echo "DB_ROOT_PASS=$ROOT_PASS" > apps/nextcloud/.env   
+          
+          # O operador '>>' anexa a variável de aplicação na linha subsequente do ficheiro
+          echo "DB_PASS=$APP_PASS" >> apps/nextcloud/.env        
+          
+          docker compose -f apps/nextcloud/nextcloud.yml up -d --remove-orphans
+
+      - name: 🧹 Hardening de Storage (Prune)
+        run: docker image prune -af # Manutenção preventiva: Purga imagens órfãs ou sem tag para prevenir saturação do LVM (/data).

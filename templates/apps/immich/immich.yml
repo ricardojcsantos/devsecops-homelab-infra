@@ -1,0 +1,43 @@
+services:
+  immich-server:
+    container_name: immich-server
+    image: ghcr.io/immich-app/immich-server:v2.5.6        # Versão fixa para evitar que atualizações automáticas partam o sistema.
+    command: ['start.sh', 'immich']                       # Inicia o servidor principal e a API da galeria.
+    volumes:
+      - /data/immich/upload:/usr/src/app/upload           # Pasta física no servidor onde as fotos originais vão ficar guardadas.
+      - /etc/localtime:/etc/localtime:ro                  # Sincroniza a hora do contentor com a do servidor (Modo de leitura apenas).
+    env_file:
+      - .env                                              # Lê as passwords injetadas de forma invisível pelo GitHub Actions.
+    # ports:
+    #   - '2283:2283'                                     # HARDENING: Desativado. O NPM comunica internamente, não é preciso expor portas à rede local.
+    depends_on:
+      - redis                                             # Ordem de arranque: O servidor espera pela base de dados e pela cache.
+      - database
+    restart: unless-stopped                               # Resiliência: Arranca automaticamente se a máquina reiniciar.
+    networks:
+      - proxy-network                                     # Liga o contentor à rede isolada do Nginx Proxy Manager.
+
+  redis:
+    container_name: immich-redis
+    image: docker.io/redis:6.2-alpine                     # Imagem Alpine (Minimalista): Consome pouca RAM e tem uma superfície de ataque menor.
+    restart: unless-stopped
+    networks:
+      - proxy-network
+
+  database:
+    container_name: immich-postgres
+    image: docker.io/tensorchord/pgvecto-rs:pg14-v0.2.0   # Base de dados PostgreSQL modificada (Motor vetorial para pesquisa por Inteligência Artificial).
+    environment:
+      POSTGRES_PASSWORD: ${DB_PASSWORD}                   # Credenciais puxadas dinamicamente do ficheiro .env.
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_DB: ${DB_DATABASE_NAME}
+      POSTGRES_INITDB_ARGS: '--data-checksums'            # Integridade: Valida constantemente os dados contra corrupção no disco.
+    volumes:
+      - /data/immich/postgres:/var/lib/postgresql/data    # Pasta física onde os dados da Base de Dados ficam guardados.
+    restart: unless-stopped
+    networks:
+      - proxy-network
+
+networks:
+  proxy-network:
+    external: true                                        # Roteamento: Diz ao Docker para usar a rede segura que já foi criada pelo NPM.
