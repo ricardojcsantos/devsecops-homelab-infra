@@ -1,73 +1,60 @@
-# 🛡️ DevSecOps Home Lab
+<div align="center">
 
+#  DevSecOps Home Lab
+ 
 ![Status](https://img.shields.io/badge/Status-Em_Andamento-yellow?style=for-the-badge)
 ![License](https://img.shields.io/badge/License-MIT-grey?style=for-the-badge)
-
+ 
 ![Proxmox](https://img.shields.io/badge/Proxmox-E57000?style=for-the-badge&logo=proxmox&logoColor=white)
-![Debian](https://img.shields.io/badge/Debian-A81D33?style=for-the-badge&logo=debian&logoColor=white)
-![Linux](https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black)
-
 ![pfSense](https://img.shields.io/badge/pfSense-2C3E50?style=for-the-badge&logo=pfsense&logoColor=white)
-![Cloudflare](https://img.shields.io/badge/Cloudflare-F38020?style=for-the-badge&logo=cloudflare&logoColor=white)
-
 ![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
-![Vaultwarden](https://img.shields.io/badge/Vaultwarden-175DDC?style=for-the-badge&logo=bitwarden&logoColor=white)
-![Nextcloud](https://img.shields.io/badge/Nextcloud-0082C9?style=for-the-badge&logo=nextcloud&logoColor=white)
+![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=githubactions&logoColor=white)
+![Cloudflare](https://img.shields.io/badge/Cloudflare-F38020?style=for-the-badge&logo=cloudflare&logoColor=white)
+![A aprender](https://img.shields.io/badge/A_aprender-Ansible_%26_Terraform-lightgrey?style=for-the-badge)
+ 
+</div>
 
-![Bash](https://img.shields.io/badge/Bash-4EAA25?style=for-the-badge&logo=gnu-bash&logoColor=white)
-![Git](https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=git&logoColor=white)
-![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)
-
-
-## 📖 Sobre o Projeto
-
-Este repositório documenta a construção e gestão da minha infraestrutura de laboratório pessoal (**Home Lab**).
-
-O objetivo principal é simular um ambiente empresarial real (**Enterprise-Grade**), saindo da configuração doméstica padrão para uma arquitetura baseada em **Segurança Ofensiva/Defensiva**, **Segmentação de Rede** e **Automação**.
-
-Aqui centralizo toda a documentação desde instalações, configurações de rede, scripts de manutenção e código de infraestrutura (IaC).
-
-## 🗺️ Arquitetura de Rede
-
-Abaixo encontra-se o diagrama da topologia física e lógica implementada, destacando a separação entre o Hardware, a Camada de Virtualização e a Segmentação via VLANs.
-
+## Sobre o Projeto
+ 
+Este repositório documenta a construção e gestão da minha infraestrutura de laboratório pessoal (**Home Lab**), montada num único Mini PC com Proxmox VE.
+ 
+O objetivo é simular um ambiente empresarial real: segmentação de rede por VLANs, firewall dedicado, backup automatizado, e deployment de serviços via Docker com um pipeline de CI/CD próprio em GitHub Actions — tudo documentado passo-a-passo à medida que construo.
+ 
+## Arquitetura de Rede
+ 
 ![Topologia de Rede](images/network-topology.png)
+ 
+Router da operadora → Mini PC (Proxmox VE, 2 portas de rede) → VM pfSense a gerir o routing e o firewall → Switch L2 gerível → 4 VLANs segmentadas (Trusted, IoT/Media, Servers, Lab).
+ 
+## Stack Tecnológica
+ 
+* **Virtualização:** Proxmox VE
+* **Rede & Segurança:** pfSense (firewall virtualizado, VLANs, 802.1Q)
+* **Acesso Remoto:** Cloudflare Tunnel + Cloudflare WARP
+* **Backup:** Proxmox Backup Server (datastore ZFS)
+* **Serviços:** Docker & Docker Compose — Nginx Proxy Manager, Vaultwarden, Immich, Nextcloud
+* **CI/CD:** GitHub Actions — deploy automático dos serviços a partir deste repositório
+* **A aprender (roadmap):** Ansible, Terraform
 
----
-
-## 🏗️ Stack Tecnológica
-
-A infraestrutura é desenhada para ser resiliente e escalável, utilizando tecnologias padrão da indústria:
-
-* **Virtualização:** Proxmox VE.
-* **Segurança de Rede:** pfSense (Firewall Virtualizada, VLANs).
-* **Hardware de Rede:** Switch L2 Gerível (Implementação de 802.1Q).
-* **Serviços:** Docker & Docker Compose (Self-hosted apps).
-* **Automação:** Bash Scripting (Bootstrap), Ansible e Terraform.
-
----
-
-## 📂 Como está organizado?
-
-A estrutura de pastas segue uma lógica de separação de responsabilidades:
-
+## Como está organizado
+ 
 | Pasta | O que contém? |
 | :--- | :--- |
-| **`docs/`** | **Manuais e Arquitetura.** Tudo o que é para leitura humana: diagramas, guias de instalação passo-a-passo e notas de hardware. |
-| **`scripts/`** | **Automação.** Scripts prontos a correr (Bash/Python) para configurar servidores ou realizar manutenções rápidas. |
-| **`network/`** | **Rede.** Backups sanitizados do pfSense e tabelas de regras de firewall. |
-| **`infrastructure/`** | **Provisionamento (IaC).** Código (Terraform/Ansible) que cria as máquinas virtuais automaticamente e configura os serviços. |
-| **`services/`** | **Aplicações.** Configurações dos serviços que correm no laboratório (ex: Vaultwarden, Monitorização). |
+| **`docs/`** | Documentação passo-a-passo: hardware, instalação e hardening do Proxmox, rede/pfSense/VPNs, pipeline Docker/GitOps, estratégia de backups |
+| **`images/`** | Diagramas de arquitetura |
+| **`scripts/`** | Scripts de automação (Bash) — ex: hardening do Proxmox |
+| **`templates/`** | Templates de deployment reais: workflow de CI/CD (`.github/workflows/deploy.yml`) e docker-compose de cada serviço (`apps/immich`, `apps/nextcloud`, `apps/npm`, `apps/vaultwarden`) |
+ 
+## Princípios de Design
+ 
+1. **Zero Trust Networking:** tráfego entre VLANs bloqueado por defeito, só o estritamente necessário é permitido.
+2. **Infrastructure as Code (em progresso):** os serviços já são definidos e implantados via Docker Compose + CI/CD, não a cliques manuais. Ansible/Terraform são o próximo passo para levar isto ao nível da própria VM/rede.
+3. **Segurança em Camadas:** hardening desde o sistema operativo (scripts em `scripts/`) até à camada de rede (pfSense, VLANs).
 
----
-
-## 🔐 Princípios de Design
-
-Este laboratório não é apenas "instalar e usar". Segue princípios estritos de engenharia:
-
-1.  **Zero Trust Networking:** Todo o tráfego entre redes (VLANs) é bloqueado por defeito. Apenas o estritamente necessário é permitido.
-2.  **Infrastructure as Code:** Evitar configurações manuais. O objetivo é definir a infraestrutura em código para ser reprodutível.
-3.  **Segurança em Camadas:** Hardening aplicado desde a BIOS, passando pelo Sistema Operativo, até à Camada de Aplicação.
-
+## Roadmap
+ 
+- Automação de configuração com Ansible
+- Provisionamento declarativo com Terraform
+- Expandir monitorização (métricas + alertas)
 ---
 *Mantido por **Ricardo Santos**.*
